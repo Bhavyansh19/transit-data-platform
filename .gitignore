@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Data (raw/processed data shouldn't live in git)
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# Airflow
+airflow.db
+airflow.cfg
+logs/
+
+# dbt
+dbt/target/
+dbt/dbt_packages/
+dbt/logs/
+
+# Env / secrets
+.env
+*.env
+secrets.yml
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/

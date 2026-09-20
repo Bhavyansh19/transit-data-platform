@@ -1,0 +1,15 @@
+name: 'transitflow'
+version: '1.0.0'
+config-version: 2
+
+profile: 'transitflow'
+
+model-paths: ["models"]
+test-paths: ["tests"]
+
+models:
+  transitflow:
+    staging:
+      +materialized: view
+    marts:
+      +materialized: table
