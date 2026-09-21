@@ -169,6 +169,27 @@ def load_all_entities(gtfs_dir=RAW_DIR):
     return tables
 
 
+def build_scheduled_stop_events(tables):
+    """Build an analytics-ready table of scheduled trip stop events."""
+    scheduled_stops = tables["stop_times.txt"].merge(
+        tables["stops.txt"][['stop_id', 'stop_name']],
+        on="stop_id",
+        how="left",
+    )
+    scheduled_stops = scheduled_stops.merge(
+        tables["trips.txt"][['trip_id', 'route_id', 'service_id', 'trip_headsign']],
+        on="trip_id",
+        how="left",
+    )
+    scheduled_stops = scheduled_stops.merge(
+        tables["routes.txt"][['route_id', 'route_short_name', 'route_long_name']],
+        on="route_id",
+        how="left",
+    )
+
+    return scheduled_stops
+
+
 if __name__ == "__main__":
     entities = list_entities(RAW_DIR)
 
@@ -187,50 +208,4 @@ if __name__ == "__main__":
     logger.info("GTFS relationships are valid.")
     validate_unique_keys(tables)
     logger.info("GTFS keys are unique and complete.")
-
-    logger.info("Loaded table row counts:")
-    for table_name, dataframe in tables.items():
-        logger.info("%s: %s rows", table_name, f"{len(dataframe):,}")
-
-    stops = tables["stops.txt"]
-    logger.info("First five stops:\n%s", stops.head().to_string())
-
-    lake_merritt_stops = stops[stops["stop_name"] == "Lake Merritt"]
-    logger.info("Lake Merritt stops:\n%s", lake_merritt_stops.to_string())
-
-    stations = stops[stops["location_type"] == 1]
-    logger.info("Number of station records: %s", len(stations))
-
-    stop_times = tables["stop_times.txt"]
-    trips = tables["trips.txt"]
-    routes = tables["routes.txt"]
-
-    scheduled_stops = stop_times.merge(
-        stops[["stop_id", "stop_name"]],
-        on="stop_id",
-        how="left",
-    )
-    scheduled_stops = scheduled_stops.merge(
-        trips[["trip_id", "route_id", "service_id", "trip_headsign"]],
-        on="trip_id",
-        how="left",
-    )
-    scheduled_stops = scheduled_stops.merge(
-        routes[["route_id", "route_short_name", "route_long_name"]],
-        on="route_id",
-        how="left",
-    )
-    logger.info(
-        "First five scheduled stops:\n%s",
-        scheduled_stops[
-            [
-                "trip_id",
-                "route_short_name",
-                "trip_headsign",
-                "stop_id",
-                "stop_name",
-                "arrival_time",
-                "departure_time",
-            ]
-        ].head().to_string(),
-    )
+    logger.info("Static GTFS ingestion and validation succeeded.")

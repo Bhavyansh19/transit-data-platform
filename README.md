@@ -146,6 +146,26 @@ source .venv/bin/activate
 pip install -r requirements.txt   # add as dependencies accumulate
 ```
 
+## Run the local MVP
+
+From the project directory:
+
+```bash
+source .venv/bin/activate
+python src/run_pipeline.py
+python -m pytest -q
+```
+
+The pipeline downloads the static GTFS feed only when the raw folder is empty, validates the
+core files and relationships, and writes two local outputs:
+
+- `data/processed/scheduled_stop_events.csv` — Silver/staging-level joined schedule events.
+- `data/processed/route_schedule_summary.csv` — Gold/mart-level route summary.
+
+The live GTFS-Realtime endpoint is an optional input. BART's endpoint currently returns a
+Cloudflare 403 to automated requests from some networks, so local tests use a mocked protobuf
+feed and do not depend on live availability.
+
 ## Repo structure
 
 ```text

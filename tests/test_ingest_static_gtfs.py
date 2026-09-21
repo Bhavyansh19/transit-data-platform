@@ -7,6 +7,7 @@ import pandas as pd
 import pytest
 
 from src.ingest_static_gtfs import (
+    build_scheduled_stop_events,
     download_gtfs,
     list_entities,
     load_entity,
@@ -47,6 +48,42 @@ def test_load_entity_reads_csv(tmp_path: Path):
 
     assert list(stops.columns) == ["stop_id", "stop_name"]
     assert len(stops) == 1
+
+
+def test_build_scheduled_stop_events_joins_names_and_routes():
+    tables = {
+        "stop_times.txt": pd.DataFrame(
+            {
+                "trip_id": ["T1"],
+                "stop_id": ["S1"],
+                "arrival_time": ["08:00:00"],
+                "departure_time": ["08:01:00"],
+            }
+        ),
+        "stops.txt": pd.DataFrame(
+            {"stop_id": ["S1"], "stop_name": ["Station"]}
+        ),
+        "trips.txt": pd.DataFrame(
+            {
+                "trip_id": ["T1"],
+                "route_id": ["R1"],
+                "service_id": ["W1"],
+                "trip_headsign": ["Downtown"],
+            }
+        ),
+        "routes.txt": pd.DataFrame(
+            {
+                "route_id": ["R1"],
+                "route_short_name": ["Red"],
+                "route_long_name": ["Red Line"],
+            }
+        ),
+    }
+
+    result = build_scheduled_stop_events(tables)
+
+    assert result.loc[0, "stop_name"] == "Station"
+    assert result.loc[0, "route_short_name"] == "Red"
 
 
 def test_validation_functions_accept_valid_tables():
