@@ -49,6 +49,7 @@ def test_fetch_trip_updates_parses_protobuf(monkeypatch, tmp_path):
 
     output_path = land_raw(
         [parsed],
+        feed_name="trip_updates",
         out_dir=tmp_path,
         captured_at=datetime(2026, 9, 20, tzinfo=timezone.utc),
     )
