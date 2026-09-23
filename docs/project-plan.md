@@ -31,11 +31,14 @@ the code. Each entry should be short: what shipped, what broke, what's next.
 **Notes:**
 
 ## Week 4 — Warehouse + dbt
-- [ ] Warehouse chosen and set up (Snowflake trial or local Postgres)
+- [x] Warehouse chosen and set up (local PostgreSQL)
 - [ ] Raw → staging → marts dbt models built
 - [ ] dbt tests added (not-null, unique, relationships)
 
 **Notes:**
+
+- Loaded the local star schema into PostgreSQL database `transitflow` on port `5433`.
+- Warehouse tables loaded: four dimensions and `fct_scheduled_stop_events`.
 
 ## Week 5 — AWS
 - [ ] Raw files landing in S3

@@ -21,6 +21,9 @@ dbt/target/
 dbt/dbt_packages/
 dbt/logs/
 
+# Local PostgreSQL instance
+.postgres/
+
 # Env / secrets
 .env
 *.env

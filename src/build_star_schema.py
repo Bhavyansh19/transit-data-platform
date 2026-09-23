@@ -39,9 +39,16 @@ def build_star_schema():
     STAR_SCHEMA_DIR.mkdir(parents=True, exist_ok=True)
 
     dimensions = {
-        "dim_stops.csv": tables["stops.txt"],
-        "dim_routes.csv": tables["routes.txt"],
-        "dim_trips.csv": tables["trips.txt"],
+        "dim_stops.csv": tables["stops.txt"][[
+            "stop_id", "stop_name", "stop_lat", "stop_lon",
+            "parent_station", "platform_code",
+        ]],
+        "dim_routes.csv": tables["routes.txt"][[
+            "route_id", "route_short_name", "route_long_name", "route_color",
+        ]],
+        "dim_trips.csv": tables["trips.txt"][[
+            "trip_id", "route_id", "service_id", "trip_headsign", "direction_id",
+        ]],
         "dim_service_calendar.csv": tables["calendar.txt"],
     }
 
@@ -57,7 +64,15 @@ def build_star_schema():
         tables["trips.txt"][["trip_id", "route_id", "service_id"]],
         on="trip_id",
         how="left",
-    )
+    )[[
+        "trip_id",
+        "stop_sequence",
+        "stop_id",
+        "route_id",
+        "service_id",
+        "arrival_time",
+        "departure_time",
+    ]]
 
     fact.to_csv(STAR_SCHEMA_DIR / "fct_scheduled_stop_events.csv", index=False)
 
