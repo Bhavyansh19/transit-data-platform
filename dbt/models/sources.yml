@@ -1,0 +1,12 @@
+version: 2
+
+sources:
+  - name: transitflow_warehouse
+    description: "Tables loaded into PostgreSQL by the Python pipeline."
+    schema: public
+    tables:
+      - name: dim_stops
+      - name: dim_routes
+      - name: dim_trips
+      - name: dim_service_calendar
+      - name: fct_scheduled_stop_events

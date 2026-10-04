@@ -1,5 +1,5 @@
--- First conceptual warehouse schema for TransitFlow.
--- This is documentation SQL for now; it is not connected to a database yet.
+-- PostgreSQL warehouse schema for TransitFlow.
+-- This file creates the tables and relationships used by the local warehouse.
 
 create table dim_stops (
     stop_id varchar primary key,

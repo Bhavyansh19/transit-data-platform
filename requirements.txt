@@ -1,6 +1,7 @@
 requests>=2.31
 pandas>=2.0
 pytest>=8.0
-gtfs-realtime-bindings>=1.0
+gtfs-realtime-bindings==2.2.0
 dbt-core>=1.7
+dbt-postgres>=1.11,<2.0
 apache-airflow>=2.8

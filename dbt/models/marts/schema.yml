@@ -1,0 +1,66 @@
+version: 2
+
+models:
+  - name: dim_stops
+    description: "Analytics dimension with one row per stop."
+    columns:
+      - name: stop_id
+        tests:
+          - not_null
+          - unique
+
+  - name: dim_routes
+    description: "Analytics dimension with one row per route."
+    columns:
+      - name: route_id
+        tests:
+          - not_null
+          - unique
+
+  - name: dim_trips
+    description: "Analytics dimension with one row per trip."
+    columns:
+      - name: trip_id
+        tests:
+          - not_null
+          - unique
+
+  - name: dim_service_calendar
+    description: "Analytics dimension with one row per service calendar."
+    columns:
+      - name: service_id
+        tests:
+          - not_null
+          - unique
+
+  - name: fct_scheduled_stop_events
+    description: "Analytics fact with one row per trip at one stop sequence."
+    columns:
+      - name: trip_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_trips')
+                field: trip_id
+      - name: stop_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_stops')
+                field: stop_id
+      - name: route_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_routes')
+                field: route_id
+      - name: service_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_service_calendar')
+                field: service_id

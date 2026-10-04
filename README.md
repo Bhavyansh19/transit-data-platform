@@ -45,10 +45,10 @@ when the Airflow DAG is live.)
 |---|---|---|
 | Ingestion | Python (`requests`, `pandas`) | Pulls static GTFS zip + GTFS-RT protobuf feeds |
 | Storage (raw) | Local / S3 | Starts local, moves to S3 in Week 5 |
-| Warehouse | Snowflake (or Postgres locally first) | raw → staging → marts |
+| Warehouse | Local PostgreSQL | source tables → staging → marts |
 | Transformation | dbt | Models, tests, documentation |
 | Orchestration | Airflow | DAGs, retries, scheduling |
-| Modeling | Star schema | Fact: trip updates. Dimensions: stations, routes, calendar |
+| Modeling | Star schema | Fact: scheduled stop events. Dimensions: stops, routes, trips, calendar |
 | Version control | Git / GitHub | This repo |
 
 ## What this pipeline does
@@ -73,8 +73,8 @@ transformed with dbt.
 
 ## Data model
 
-- **Fact table:** `fct_trip_updates` — one row per real-time trip update event
-- **Dimension tables:** `dim_stations`, `dim_routes`, `dim_calendar`
+- **Fact table:** `fct_scheduled_stop_events` — one row per scheduled trip at one stop sequence
+- **Dimension tables:** `dim_stops`, `dim_routes`, `dim_trips`, `dim_service_calendar`
 - SCD strategy: Type 2 on `dim_routes` / `dim_stations` if schedule changes are observed during
   the project — documented here once implemented, not assumed up front.
 
@@ -90,7 +90,7 @@ transformed with dbt.
 
 ## Data quality
 
-- Tests defined in `dbt/` (not-null, unique, relationships, accepted values).
+- Tests defined in `dbt/` (not-null, unique, composite-key, and relationships).
 - Explicit handling for the two known BART feed inconsistencies listed above under **Data
   source** — this is the main "real-world mess" this project demonstrates.
 - Row counts and null-rate checks logged per run (numbers land in **Numbers** below once
@@ -119,7 +119,7 @@ pre-fill this with invented numbers._
 - [ ] Week 1 — repo, Git, first Python ingestion script (raw landing)
 - [ ] Week 2 — DE fundamentals applied: incremental ingestion, idempotency
 - [ ] Week 3 — data model designed (star schema, fact/dim)
-- [ ] Week 4 — warehouse loaded, dbt models + tests live
+- [x] Week 4 — warehouse loaded, dbt models + tests live
 - [ ] Week 5 — pipeline moved onto AWS (S3, Glue, Redshift/Athena)
 - [ ] Week 6 — Airflow DAG orchestrating the full pipeline end-to-end
 - [ ] Post-week-6 — PySpark/Databricks or Kafka additions, only if a target JD calls for it
@@ -133,6 +133,9 @@ _Fill this in as the project develops — this is what you'll actually say in in
 - Why star schema over snowflake for this data
 - Why ELT here / where ETL made more sense instead
 - One thing that broke in the pipeline and how it was diagnosed and fixed
+- Why `source()` is used for existing PostgreSQL tables and `ref()` for dbt models
+- Why staging models are views and mart models are tables
+- How PostgreSQL foreign keys caught the fact-table column-order bug
 
 ---
 
@@ -145,6 +148,18 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt   # add as dependencies accumulate
 ```
+
+## Run dbt locally
+
+Start the project-local PostgreSQL server first, then run:
+
+```bash
+dbt debug --project-dir dbt --profiles-dir dbt
+dbt build --project-dir dbt --profiles-dir dbt
+```
+
+The dbt build creates five staging views, five `_dbt` mart tables, and runs 27 data-quality
+tests. The latest local run completed with 37 passes and 0 errors.
 
 ## Run the local MVP
 

@@ -1,0 +1,47 @@
+version: 2
+
+models:
+  - name: stg_stops
+    description: "Clean staging view with one row per stop."
+    columns:
+      - name: stop_id
+        tests:
+          - not_null
+          - unique
+
+  - name: stg_routes
+    description: "Clean staging view with one row per route."
+    columns:
+      - name: route_id
+        tests:
+          - not_null
+          - unique
+
+  - name: stg_trips
+    description: "Clean staging view with one row per trip."
+    columns:
+      - name: trip_id
+        tests:
+          - not_null
+          - unique
+
+  - name: stg_service_calendar
+    description: "Clean staging view with one row per service calendar."
+    columns:
+      - name: service_id
+        tests:
+          - not_null
+          - unique
+
+  - name: stg_scheduled_stop_events
+    description: "One row per scheduled trip at one stop sequence."
+    tests:
+      - unique:
+          column_name: "concat(trip_id, '-', stop_sequence)"
+    columns:
+      - name: trip_id
+        tests:
+          - not_null
+      - name: stop_sequence
+        tests:
+          - not_null

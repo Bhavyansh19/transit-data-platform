@@ -32,13 +32,17 @@ the code. Each entry should be short: what shipped, what broke, what's next.
 
 ## Week 4 — Warehouse + dbt
 - [x] Warehouse chosen and set up (local PostgreSQL)
-- [ ] Raw → staging → marts dbt models built
-- [ ] dbt tests added (not-null, unique, relationships)
+- [x] Source → staging → marts dbt models built
+- [x] dbt tests added (not-null, unique, composite-key, relationships)
 
 **Notes:**
 
 - Loaded the local star schema into PostgreSQL database `transitflow` on port `5433`.
 - Warehouse tables loaded: four dimensions and `fct_scheduled_stop_events`.
+- Added `dbt-postgres` and configured a local dbt profile.
+- Built five staging views and five `_dbt` mart tables.
+- Added 27 dbt data-quality tests; the full build completed with 37 passes and 0 errors.
+- Pinned `gtfs-realtime-bindings==2.2.0` after resolving a Protobuf dependency conflict with dbt.
 
 ## Week 5 — AWS
 - [ ] Raw files landing in S3
