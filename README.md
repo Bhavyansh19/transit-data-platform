@@ -158,8 +158,9 @@ dbt debug --project-dir dbt --profiles-dir dbt
 dbt build --project-dir dbt --profiles-dir dbt
 ```
 
-The dbt build creates five staging views, five `_dbt` mart tables, and runs 27 data-quality
-tests. The latest local run completed with 37 passes and 0 errors.
+The dbt build creates five staging views, six mart tables, and runs the configured data-quality
+tests. The route summary mart contains one row per route with scheduled event, trip, and stop
+counts.
 
 ## Run the local MVP
 

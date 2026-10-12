@@ -43,6 +43,8 @@ the code. Each entry should be short: what shipped, what broke, what's next.
 - Built five staging views and five `_dbt` mart tables.
 - Added 27 dbt data-quality tests; the full build completed with 37 passes and 0 errors.
 - Pinned `gtfs-realtime-bindings==2.2.0` after resolving a Protobuf dependency conflict with dbt.
+- Added a route-level summary mart with event, trip, and stop counts using `GROUP BY` and
+  `COUNT(DISTINCT ...)`.
 
 ## Week 5 — AWS
 - [ ] Raw files landing in S3

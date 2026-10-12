@@ -64,3 +64,27 @@ models:
               arguments:
                 to: ref('dim_service_calendar')
                 field: service_id
+
+  - name: fct_route_schedule_summary
+    description: "One row per route with scheduled event, trip, and stop counts."
+    columns:
+      - name: route_id
+        tests:
+          - not_null
+          - unique
+          - relationships:
+              arguments:
+                to: ref('dim_routes')
+                field: route_id
+      - name: route_short_name
+        tests:
+          - not_null
+      - name: scheduled_stop_events
+        tests:
+          - not_null
+      - name: scheduled_trips
+        tests:
+          - not_null
+      - name: scheduled_stops
+        tests:
+          - not_null
