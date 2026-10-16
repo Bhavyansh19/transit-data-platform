@@ -1,6 +1,7 @@
 """Fetch, parse, and store BART GTFS-Realtime data."""
 
 import json
+import hashlib
 import logging
 from datetime import datetime, timezone
 from pathlib import Path
@@ -72,15 +73,37 @@ def parse_alerts(entities):
 
 
 def land_raw(records, feed_name, out_dir=RAW_DIR, captured_at=None):
-    """Write records to a timestamped JSON file and return its path."""
+    """Write one unique feed snapshot and return its path.
+
+    The filename is based on the feed contents, so rerunning ingestion with
+    the same records returns the existing file instead of creating a duplicate.
+    """
     out_dir.mkdir(parents=True, exist_ok=True)
 
     if captured_at is None:
         captured_at = datetime.now(timezone.utc)
 
-    timestamp = captured_at.strftime("%Y%m%dT%H%M%SZ")
-    output_path = out_dir / f"{feed_name}_{timestamp}.json"
-    output_path.write_text(json.dumps(records, indent=2), encoding="utf-8")
+    canonical_records = sorted(
+        records,
+        key=lambda record: json.dumps(record, sort_keys=True),
+    )
+    canonical_json = json.dumps(
+        canonical_records,
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+    content_hash = hashlib.sha256(canonical_json.encode("utf-8")).hexdigest()[:16]
+    output_path = out_dir / f"{feed_name}_{content_hash}.json"
+
+    if output_path.exists():
+        logger.info("Feed snapshot already landed at %s", output_path)
+        return output_path
+
+    payload = {
+        "captured_at": captured_at.isoformat(),
+        "records": canonical_records,
+    }
+    output_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
     return output_path
 
 

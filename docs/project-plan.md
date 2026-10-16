@@ -18,11 +18,14 @@ the code. Each entry should be short: what shipped, what broke, what's next.
 
 ## Week 2 — DE fundamentals, ingestion hardening
 - [ ] GTFS-RT trip updates pulled (protobuf → parsed)
-- [ ] Raw landing for both static + real-time feeds
-- [ ] Idempotency: re-running ingestion doesn't duplicate rows
+- [x] Raw landing for both static + real-time feeds
+- [x] Idempotency: re-running ingestion doesn't duplicate snapshots
 - [ ] Documented the two known BART feed inconsistencies and how they show up in the raw data
 
 **Notes:**
+
+- Realtime raw snapshots now use a content hash in the filename, so identical feed contents
+  are written only once even if the capture time changes.
 
 ## Week 3 — Data modeling
 - [ ] Star schema designed: fact_trip_updates + dim_stations, dim_routes, dim_calendar

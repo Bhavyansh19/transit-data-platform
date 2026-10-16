@@ -54,8 +54,19 @@ def test_fetch_trip_updates_parses_protobuf(monkeypatch, tmp_path):
         captured_at=datetime(2026, 9, 20, tzinfo=timezone.utc),
     )
 
-    assert output_path.name == "trip_updates_20260920T000000Z.json"
+    assert output_path.name.startswith("trip_updates_")
+    assert output_path.name.endswith(".json")
     assert '"trip_id": "trip-123"' in output_path.read_text()
+
+    duplicate_path = land_raw(
+        [parsed],
+        feed_name="trip_updates",
+        out_dir=tmp_path,
+        captured_at=datetime(2026, 9, 20, 0, 1, tzinfo=timezone.utc),
+    )
+
+    assert duplicate_path == output_path
+    assert len(list(tmp_path.glob("trip_updates_*.json"))) == 1
 
     staging = build_staging_trip_updates(
         [parsed, parsed, {"entity_id": "entity-2", "trip_id": None}]

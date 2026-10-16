@@ -182,6 +182,9 @@ The live GTFS-Realtime endpoint is an optional input. BART's endpoint currently 
 Cloudflare 403 to automated requests from some networks, so local tests use a mocked protobuf
 feed and do not depend on live availability.
 
+Realtime raw landing is idempotent: identical feed contents map to the same content-hashed
+snapshot file and are not written twice.
+
 ## Repo structure
 
 ```text
