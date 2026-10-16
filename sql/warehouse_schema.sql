@@ -52,3 +52,12 @@ create table fct_scheduled_stop_events (
     foreign key (trip_id) references dim_trips(trip_id),
     foreign key (service_id) references dim_service_calendar(service_id)
 );
+
+create table if not exists fct_realtime_trip_updates (
+    snapshot_hash varchar,
+    entity_id varchar,
+    trip_id varchar,
+    captured_at timestamptz,
+    source_file varchar,
+    primary key (snapshot_hash, entity_id)
+);

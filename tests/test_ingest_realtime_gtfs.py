@@ -9,6 +9,7 @@ from src.ingest_realtime_gtfs import (
     parse_trip_update_entity,
     parse_trip_updates,
 )
+from src.load_realtime_to_postgres import read_trip_update_snapshot
 
 
 class FakeResponse:
@@ -67,6 +68,18 @@ def test_fetch_trip_updates_parses_protobuf(monkeypatch, tmp_path):
 
     assert duplicate_path == output_path
     assert len(list(tmp_path.glob("trip_updates_*.json"))) == 1
+
+    rows = read_trip_update_snapshot(output_path)
+
+    assert rows == [
+        (
+            output_path.stem.removeprefix("trip_updates_"),
+            "entity-1",
+            "trip-123",
+            "2026-09-20T00:00:00+00:00",
+            output_path.name,
+        )
+    ]
 
     staging = build_staging_trip_updates(
         [parsed, parsed, {"entity_id": "entity-2", "trip_id": None}]

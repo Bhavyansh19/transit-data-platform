@@ -185,6 +185,9 @@ feed and do not depend on live availability.
 Realtime raw landing is idempotent: identical feed contents map to the same content-hashed
 snapshot file and are not written twice.
 
+The realtime loader inserts those snapshots into PostgreSQL using `(snapshot_hash, entity_id)`
+as a conflict-safe key, so rerunning the loader does not duplicate existing rows.
+
 ## Repo structure
 
 ```text

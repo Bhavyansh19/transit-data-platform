@@ -26,6 +26,7 @@ the code. Each entry should be short: what shipped, what broke, what's next.
 
 - Realtime raw snapshots now use a content hash in the filename, so identical feed contents
   are written only once even if the capture time changes.
+- Added an incremental PostgreSQL loader using `(snapshot_hash, entity_id)` as its idempotency key.
 
 ## Week 3 — Data modeling
 - [ ] Star schema designed: fact_trip_updates + dim_stations, dim_routes, dim_calendar
