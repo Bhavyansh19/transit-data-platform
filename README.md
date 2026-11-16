@@ -188,6 +188,9 @@ snapshot file and are not written twice.
 The realtime loader inserts those snapshots into PostgreSQL using `(snapshot_hash, entity_id)`
 as a conflict-safe key, so rerunning the loader does not duplicate existing rows.
 
+The realtime table is also registered as a dbt source and exposed through the
+`stg_realtime_trip_updates` staging view.
+
 ## Repo structure
 
 ```text

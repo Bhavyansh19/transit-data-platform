@@ -45,3 +45,22 @@ models:
       - name: stop_sequence
         tests:
           - not_null
+
+  - name: stg_realtime_trip_updates
+    description: "Realtime trip updates landed incrementally in PostgreSQL."
+    tests:
+      - unique:
+          column_name: "concat(snapshot_hash, '-', entity_id)"
+    columns:
+      - name: snapshot_hash
+        tests:
+          - not_null
+      - name: entity_id
+        tests:
+          - not_null
+      - name: trip_id
+        tests:
+          - not_null
+      - name: captured_at
+        tests:
+          - not_null

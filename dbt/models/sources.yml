@@ -10,3 +10,4 @@ sources:
       - name: dim_trips
       - name: dim_service_calendar
       - name: fct_scheduled_stop_events
+      - name: fct_realtime_trip_updates
