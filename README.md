@@ -178,9 +178,10 @@ core files and relationships, and writes two local outputs:
 - `data/processed/scheduled_stop_events.csv` — Silver/staging-level joined schedule events.
 - `data/processed/route_schedule_summary.csv` — Gold/mart-level route summary.
 
-The live GTFS-Realtime endpoint is an optional input. BART's endpoint currently returns a
-Cloudflare 403 to automated requests from some networks, so local tests use a mocked protobuf
-feed and do not depend on live availability.
+The live GTFS-Realtime endpoint is an optional input. TransitFlow uses BART's newer
+`tripupdateplatform.aspx` feed, which BART documents as the replacement for the older endpoint.
+Automated terminal requests from some networks may still receive a Cloudflare 403, so local
+tests use a mocked protobuf feed and do not depend on live availability.
 
 Realtime raw landing is idempotent: identical feed contents map to the same content-hashed
 snapshot file and are not written twice.

@@ -11,7 +11,9 @@ import requests
 from google.transit import gtfs_realtime_pb2
 
 
-TRIP_UPDATES_URL = "https://api.bart.gov/gtfsrt/tripupdate.aspx"
+# BART's migration notice points to the platform-based feed as the current
+# replacement for the older tripupdate.aspx endpoint.
+TRIP_UPDATES_URL = "https://api.bart.gov/gtfsrt/tripupdateplatform.aspx"
 ALERTS_URL = "https://api.bart.gov/gtfsrt/alerts.aspx"
 RAW_DIR = Path(__file__).resolve().parent.parent / "data" / "raw" / "gtfs_realtime"
 

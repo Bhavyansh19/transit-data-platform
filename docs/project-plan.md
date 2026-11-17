@@ -28,6 +28,8 @@ the code. Each entry should be short: what shipped, what broke, what's next.
   are written only once even if the capture time changes.
 - Added an incremental PostgreSQL loader using `(snapshot_hash, entity_id)` as its idempotency key.
 - Registered realtime updates as a dbt source and added a tested staging view.
+- Updated the trip-update URL to BART's platform-based replacement endpoint; terminal access is
+  still network-dependent because Cloudflare may challenge automated requests.
 
 ## Week 3 — Data modeling
 - [ ] Star schema designed: fact_trip_updates + dim_stations, dim_routes, dim_calendar
