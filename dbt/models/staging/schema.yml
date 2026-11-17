@@ -64,3 +64,22 @@ models:
       - name: captured_at
         tests:
           - not_null
+
+  - name: stg_realtime_etd
+    description: "Live BART departure estimates from the official ETD API."
+    tests:
+      - unique:
+          column_name: "concat(snapshot_hash, '-', record_number)"
+    columns:
+      - name: snapshot_hash
+        tests:
+          - not_null
+      - name: record_number
+        tests:
+          - not_null
+      - name: station_abbr
+        tests:
+          - not_null
+      - name: captured_at
+        tests:
+          - not_null

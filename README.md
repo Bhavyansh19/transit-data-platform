@@ -62,8 +62,8 @@ transformed with dbt.
 ## Data source
 
 - **Static schedule (GTFS):** `https://www.bart.gov/dev/schedules/google_transit.zip`
-- **Real-time trip updates (GTFS-RT):** `http://api.bart.gov/gtfsrt/tripupdate.aspx`
-- **Real-time alerts (GTFS-RT):** `http://api.bart.gov/gtfsrt/alerts.aspx`
+- **Real-time trip updates (GTFS-RT):** `https://api.bart.gov/gtfsrt/tripupdateplatform.aspx`
+- **Real-time departure estimates (fallback):** BART Legacy ETD JSON API
 - No registration required; usage subject to BART's developer license agreement.
 - **Known real-world data issues to handle** (this is the point of picking a messy source):
   - Some Antioch/Pittsburg Center GTFS-RT trip IDs do not match the static schedule's trip IDs
@@ -178,10 +178,13 @@ core files and relationships, and writes two local outputs:
 - `data/processed/scheduled_stop_events.csv` — Silver/staging-level joined schedule events.
 - `data/processed/route_schedule_summary.csv` — Gold/mart-level route summary.
 
-The live GTFS-Realtime endpoint is an optional input. TransitFlow uses BART's newer
-`tripupdateplatform.aspx` feed, which BART documents as the replacement for the older endpoint.
-Automated terminal requests from some networks may still receive a Cloudflare 403, so local
-tests use a mocked protobuf feed and do not depend on live availability.
+The live GTFS-Realtime endpoint is an optional input. TransitFlow first keeps the standard
+protobuf path, but automated terminal requests may receive a Cloudflare 403. For a practical
+working realtime demo, `src/ingest_bart_etd.py` calls BART's documented ETD JSON API using its
+public key. It tries BART directly and then uses a read-only relay only when BART returns 403.
+The resulting real departure estimates are landed in `data/raw/bart_etd/` and loaded into
+`fct_realtime_etd`. At hours when BART is not operating, an empty response is valid and is
+logged as zero active departures.
 
 Realtime raw landing is idempotent: identical feed contents map to the same content-hashed
 snapshot file and are not written twice.
@@ -189,8 +192,17 @@ snapshot file and are not written twice.
 The realtime loader inserts those snapshots into PostgreSQL using `(snapshot_hash, entity_id)`
 as a conflict-safe key, so rerunning the loader does not duplicate existing rows.
 
-The realtime table is also registered as a dbt source and exposed through the
-`stg_realtime_trip_updates` staging view.
+The realtime tables are also registered as dbt sources and exposed through the
+`stg_realtime_trip_updates` and `stg_realtime_etd` staging views.
+
+To run the working ETD path:
+
+```bash
+source .venv/bin/activate
+python src/ingest_bart_etd.py
+python src/load_bart_etd_to_postgres.py
+dbt build --project-dir dbt --profiles-dir dbt
+```
 
 ## Repo structure
 

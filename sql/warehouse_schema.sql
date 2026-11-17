@@ -61,3 +61,23 @@ create table if not exists fct_realtime_trip_updates (
     source_file varchar,
     primary key (snapshot_hash, entity_id)
 );
+
+create table if not exists fct_realtime_etd (
+    snapshot_hash varchar,
+    record_number integer,
+    station_abbr varchar,
+    station_name varchar,
+    destination_abbr varchar,
+    destination_name varchar,
+    minutes varchar,
+    platform varchar,
+    direction varchar,
+    train_length varchar,
+    color varchar,
+    delay_seconds varchar,
+    cancelled varchar,
+    dynamic varchar,
+    captured_at timestamptz,
+    source_file varchar,
+    primary key (snapshot_hash, record_number)
+);

@@ -88,3 +88,19 @@ models:
       - name: scheduled_stops
         tests:
           - not_null
+
+  - name: fct_realtime_departures
+    description: "Analytics fact with current BART departure estimates."
+    columns:
+      - name: snapshot_hash
+        tests:
+          - not_null
+      - name: record_number
+        tests:
+          - not_null
+      - name: station_abbr
+        tests:
+          - not_null
+      - name: captured_at
+        tests:
+          - not_null

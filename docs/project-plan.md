@@ -30,6 +30,9 @@ the code. Each entry should be short: what shipped, what broke, what's next.
 - Registered realtime updates as a dbt source and added a tested staging view.
 - Updated the trip-update URL to BART's platform-based replacement endpoint; terminal access is
   still network-dependent because Cloudflare may challenge automated requests.
+- Added a working BART ETD JSON fallback. It uses BART's documented public key, tries the official
+  endpoint first, and falls back to a read-only relay only after a Cloudflare 403. ETD snapshots
+  are content-hashed, loaded into `fct_realtime_etd`, and exposed through `stg_realtime_etd`.
 
 ## Week 3 — Data modeling
 - [ ] Star schema designed: fact_trip_updates + dim_stations, dim_routes, dim_calendar
@@ -52,6 +55,13 @@ the code. Each entry should be short: what shipped, what broke, what's next.
 - Pinned `gtfs-realtime-bindings==2.2.0` after resolving a Protobuf dependency conflict with dbt.
 - Added a route-level summary mart with event, trip, and stop counts using `GROUP BY` and
   `COUNT(DISTINCT ...)`.
+
+## Realtime source note
+
+The official BART GTFS-RT protobuf endpoint remains in the project because it is the standard
+feed. For a reproducible local demo, the ETD JSON path is the currently working source. It is
+real BART data, not generated sample data. During BART's closed hours the API can legitimately
+return zero departures.
 
 ## Week 5 — AWS
 - [ ] Raw files landing in S3
